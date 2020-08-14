@@ -7,6 +7,10 @@
     "discord.js": "^12.2.0"
   },
   "devDependencies": {
+    "@types/jest": "^26.0.9",
     "jest": "^26.4.0"
+  },
+  "scripts": {
+    "test": "jest --coverage"
   }
 }

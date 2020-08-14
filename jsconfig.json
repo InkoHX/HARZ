@@ -5,5 +5,10 @@
       "ES2020"
     ],
     "module": "CommonJS"
+  },
+  "typeAcquisition": {
+    "include": [
+      "jest"
+    ]
   }
 }
