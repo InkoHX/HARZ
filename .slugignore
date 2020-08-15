@@ -1,0 +1,15 @@
+# Images
+*.gif
+*.png
+*.jpg
+
+# Test file
+*.test.js
+jest.config.js
+
+# Editor
+/.vscode
+jsconfig.json
+
+# GitHub
+/.github
