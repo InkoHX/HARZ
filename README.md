@@ -2,4 +2,4 @@
 
 # HARZ
 
-> Great Discord bot for Discord.js Japan User Group
+> A Discord bot developed for the Discord.js Japan User Group for developers.
