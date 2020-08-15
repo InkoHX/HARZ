@@ -8,6 +8,13 @@ const client = new Client({
   },
   http: {
     api: 'https://discord.com/api'
+  },
+  presence: {
+    status: 'idle',
+    activity: {
+      type: 'WATCHING',
+      name: 'COMING SOON'
+    }
   }
 })
 
