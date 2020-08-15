@@ -46,6 +46,7 @@ module.exports = async message => {
 
   if (mentionID !== message.client.user.id) return
 
+  const isForce = /-f|-F|--force/gu.test(message.content)
   /** @type {import('discord.js').Message} */
   const targetMessage = channelID && messageID
     ? await message.client.channels.fetch(channelID)
@@ -54,7 +55,7 @@ module.exports = async message => {
       .then(message => message instanceof Map ? message.first() : message)
   const codeBlocks = [...searchCodeBlocks(targetMessage.content)]
     .map(result => result.groups)
-    .filter(({ extension }) => supportLanguages.includes(extension))
+    .filter(({ extension }) => isForce || supportLanguages.includes(extension))
 
   Promise.all(codeBlocks.map(({ code }) => lintAndFix(code)))
     .then(results => results.flat())
