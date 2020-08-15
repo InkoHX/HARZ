@@ -5,6 +5,7 @@
   "license": "MIT",
   "dependencies": {
     "discord.js": "^12.2.0",
+    "highlight.js": "^10.1.2",
     "node-fetch": "^2.6.0"
   },
   "devDependencies": {
