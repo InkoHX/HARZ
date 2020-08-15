@@ -19,5 +19,8 @@
   "scripts": {
     "start": "node ./src/index.js",
     "test": "jest --coverage"
+  },
+  "engines": {
+    "node": "14.x"
   }
 }
