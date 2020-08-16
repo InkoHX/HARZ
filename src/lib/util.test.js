@@ -3,118 +3,113 @@
 const { searchCodeBlocks, searchGitHubHighlightedLineLinks } = require('./util')
 
 describe('searchCodeBlocks', () => {
-  const SEARCH_CODE_BLOCKS_TEST_CONTENT_1 = `
-123
-456
-\`\`\`
-Hello World
-\`\`\`
-E17
-ABC
-`
-
-  const SEARCH_CODE_BLOCKS_TEST_CONTENT_2 = `
-456
-\`\`\`js
-console.log('Hello World')
-\`\`\`
-123
-\`\`\`ts
-const str: string = 'ABC'
-\`\`\`
-123456789
-`
-
-  test('Does it match a single code block?', () => {
-    const results = [...searchCodeBlocks(SEARCH_CODE_BLOCKS_TEST_CONTENT_1)]
-
-    expect(results).toHaveLength(1)
-    expect(results[0].groups).toEqual({ extension: undefined, code: 'Hello World' })
+  test('matching', () => {
+    const content = [
+      '`'.repeat(3) + 'js',
+      'console.log(\'Hello World\')',
+      '`'.repeat(3),
+      '123456',
+      '`'.repeat(3),
+      'Hello World',
+      '`'.repeat(4),
+      '`'.repeat(3) + 'ts',
+      'console.log(\'1\' as number)',
+      '`'.repeat(6)
+    ]
+    const results = [...searchCodeBlocks(content.join('\n'))]
+      .map(matchArray => matchArray.groups)
+    
+    expect(results).toHaveLength(3)
+    expect(results).toEqual([
+      {
+        extension: expect.stringContaining('js'),
+        code: expect.stringContaining('console.log(\'Hello World\')')
+      },
+      {
+        extension: undefined,
+        code: expect.stringContaining('Hello World')
+      },
+      {
+        extension: expect.stringContaining('ts'),
+        code: expect.stringContaining('console.log(\'1\' as number)')
+      }
+    ])
   })
-
-  test('Does it match multiple code blocks?', () => {
-    const results = [...searchCodeBlocks(SEARCH_CODE_BLOCKS_TEST_CONTENT_2)]
-
-    expect(results).toHaveLength(2)
-    expect(results[0].groups).toEqual({ extension: 'js', code: 'console.log(\'Hello World\')' })
-    expect(results[1].groups).toEqual({ extension: 'ts', code: 'const str: string = \'ABC\'' })
+  
+  test('not matching', () => {
+    const content = [
+      '`'.repeat(2),
+      '456',
+      '`'.repeat(6),
+      '\''.repeat(3),
+      '789',
+      '\''.repeat(3)
+    ]
+    
+    expect([...searchCodeBlocks(content.join('\n'))]).toHaveLength(0)
   })
 })
 
 describe('searchGitHubHighlightedLineLinks', () => {
-  const SEARCH_GH_HIGHLIGHTED_LINK_TEST_CONTENT_1 = `
-https://github.com/InkoHX/codeblock-linter-discordbot/blob/master/.gitignore
-https://github.com/InkoHX/codeblock-linter-discordbot/blob/master/src/index.js#L1-L6
-https://github.com/InkoHX/codeblock-linter-discordbot/tree/master/src
-`
-
-  const SEARCH_GH_HIGHLIGHTED_LINK_TEST_CONTENT_2 = `
-https://github.com/InkoHX/codeblock-linter-discordbot/blob/master/.dockerignore#L2
-https://github.com/InkoHX/codeblock-linter-discordbot/blob/master/.dockerignore#L2-L5
-https://github.com/InkoHX/highlight-discordbot/blob/master/Dockerfile#L1
-https://github.com/InkoHX/highlight-discordbot/blob/master/Dockerfile
-https://github.com/InkoHX/highlight-discordbot/blob/master/Dockerfile#L1-6
-https://github.com/InkoHX/highlight-discordbot/blob/master/.eslintrc.json
-https://github.com/InkoHX/highlight-discordbot/blob/master/.eslintrc.json#L3-L11
-`
-
-  test('Does it match the highlighted link?', () => {
-    const results = [...searchGitHubHighlightedLineLinks(SEARCH_GH_HIGHLIGHTED_LINK_TEST_CONTENT_1)]
-
-    expect(results).toHaveLength(1)
-    expect(results[0].groups).toEqual({
-      owner: 'InkoHX',
-      repo: 'codeblock-linter-discordbot',
-      branch: 'master',
-      path: 'src/index.js',
-      firstLine: '1',
-      lastLine: '6'
-    })
+  test('matching', () => {
+    const content = [
+      'https://github.com/InkoHX/StarryKnight/blob/master/docker-compose.yml#L1-L24',
+      'http://github.com/InkoHX/StarryKnight/blob/master/docker-compose.yml#L1',
+      'https://github.com/InkoHX/StarryKnight/blob/master/docker-compose.yml',
+      'https://github.com/InkoHX/HARZ/blob/master/src/lib/util.js#L10-L15',
+      'http://github.com/InkoHX/HARZ/blob/master/src/lib/util.js#L10',
+      'https://github.com/InkoHX/HARZ/blob/master/src/lib/util.js'
+    ]
+    const results = [...searchGitHubHighlightedLineLinks(content.join('\n'))]
+      .map(matchArray => matchArray.groups)
+    
+    expect(results).toHaveLength(4)
+    expect(results).toEqual([
+      {
+        owner: expect.stringContaining('InkoHX'),
+        repo: expect.stringContaining('StarryKnight'),
+        branch: expect.stringContaining('master'),
+        path: expect.stringContaining('docker-compose.yml'),
+        firstLine: expect.stringContaining('1'),
+        lastLine: expect.stringContaining('24')
+      },
+      {
+        owner: expect.stringContaining('InkoHX'),
+        repo: expect.stringContaining('StarryKnight'),
+        branch: expect.stringContaining('master'),
+        path: expect.stringContaining('docker-compose.yml'),
+        firstLine: expect.stringContaining('1'),
+        lastLine: undefined
+      },
+      {
+        owner: expect.stringContaining('InkoHX'),
+        repo: expect.stringContaining('HARZ'),
+        branch: expect.stringContaining('master'),
+        path: expect.stringContaining('src/lib/util.js'),
+        firstLine: expect.stringContaining('10'),
+        lastLine: expect.stringContaining('15')
+      },
+      {
+        owner: expect.stringContaining('InkoHX'),
+        repo: expect.stringContaining('HARZ'),
+        branch: expect.stringContaining('master'),
+        path: expect.stringContaining('src/lib/util.js'),
+        firstLine: expect.stringContaining('10'),
+        lastLine: undefined
+      }
+    ])
   })
 
-  test('Does it match multiple highlighted links?', () => {
-    const results = [...searchGitHubHighlightedLineLinks(SEARCH_GH_HIGHLIGHTED_LINK_TEST_CONTENT_2)]
-
-    expect(results).toHaveLength(5)
-    expect(results[0].groups).toEqual({
-      owner: 'InkoHX',
-      repo: 'codeblock-linter-discordbot',
-      branch: 'master',
-      path: '.dockerignore',
-      firstLine: '2',
-      lastLine: undefined
-    })
-    expect(results[1].groups).toEqual({
-      owner: 'InkoHX',
-      repo: 'codeblock-linter-discordbot',
-      branch: 'master',
-      path: '.dockerignore',
-      firstLine: '2',
-      lastLine: '5'
-    })
-    expect(results[2].groups).toEqual({
-      owner: 'InkoHX',
-      repo: 'highlight-discordbot',
-      branch: 'master',
-      path: 'Dockerfile',
-      firstLine: '1',
-      lastLine: undefined
-    })
-    expect(results[3].groups).toEqual({
-      owner: 'InkoHX',
-      repo: 'highlight-discordbot',
-      branch: 'master',
-      path: 'Dockerfile',
-      firstLine: '1',
-      lastLine: '6'
-    })
-    expect(results[4].groups).toEqual({
-      owner: 'InkoHX',
-      repo: 'highlight-discordbot',
-      branch: 'master',
-      path: '.eslintrc.json',
-      firstLine: '3',
-      lastLine: '11'
-    })
+  test('not matching', () => {
+    const content = [
+      'https://github.com/InkoHX/Hypie',
+      'https://github.com/InkoHX/Hypie/blo/master/tsconfig.json#6',
+      'https://github.comm/InkoHX/Hypie/blob/master/tsconfig.json',
+      'https://github.com/InkoHX/Hypie/blob/master#L456789745'
+    ]
+    const results = [...searchGitHubHighlightedLineLinks(content.join('\n'))]
+      .map(matchArray => matchArray.groups)
+    
+    expect(results).toHaveLength(0)
   })
 })
