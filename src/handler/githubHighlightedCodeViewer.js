@@ -24,7 +24,7 @@ module.exports = async message => {
     lastLine
   }) => fetch(`https://gh-highlighted-line.vercel.app/api/${owner}/${repo}/${branch}/${encodeURIComponent(path)}/${firstLine}/${lastLine ?? ''}`)))
 
-  for await (const response of responses) {
+  for (const response of responses) {
     const cacheDate = formatDate(Date.parse(response.headers.get('date')))
     const cacheStatus = response.headers.get('x-vercel-cache')
     const { extension, code } = await response.json()
