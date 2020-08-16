@@ -12,8 +12,8 @@ const client = new Client({
   presence: {
     status: 'idle',
     activity: {
-      type: 'WATCHING',
-      name: 'COMING SOON'
+      type: 'STREAMING',
+      name: 'D1F-ALPHA'
     }
   }
 })
