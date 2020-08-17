@@ -20,9 +20,14 @@ module.exports = async message => {
   const source = message.content.match(/(?:--src|-s)=(?<source>.*)?/ui)?.groups?.source ?? 'https://raw.githubusercontent.com/discordjs/discord.js/docs/stable.json'
 
   const queries = queryString({ q: query, src: source, force, includePrivate })
-  const embed = await fetch(`https://djsdocs.sorta.moe/v2/embed?${queries}`)
+  const body = await fetch(`https://djsdocs.sorta.moe/v2/embed?${queries}`)
     .then(response => response.json())
 
-  message.reply({ embed })
-    .catch(error => message.reply(error, { code: 'ts' }))
+  if (body.error) {
+    message.reply(JSON.stringify(body, null, 2), { code: 'json' })
+      .catch(error => message.reply(error, { code: 'ts' }))
+  } else {
+    message.reply({ embed: body })
+      .catch(error => message.reply(error, { code: 'ts' }))
+  }
 }
