@@ -3,5 +3,6 @@
 module.exports = {
   GitHubHighlightedCodeViewer: require('./githubHighlightedCodeViewer'),
   CodeHighlighter: require('./codeHighlighter'),
-  CodeBlockLinter: require('./codeBlockLinter')
+  CodeBlockLinter: require('./codeBlockLinter'),
+  DocumentSearch: require('./documentSearch')
 }
