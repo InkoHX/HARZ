@@ -27,7 +27,3 @@
 Click the "Deploy to Heroku" button below and you can get HARZ running now.
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
-
-## Donate
-
-- 
