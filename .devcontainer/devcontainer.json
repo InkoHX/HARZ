@@ -1,14 +1,14 @@
 {
-	"name": "HARZ",
-	"build": {
-		"dockerfile": "Dockerfile"
-	},
-	"settings": {
-		"terminal.integrated.shell.linux": "/bin/bash"
-	},
-	"extensions": [
-		"DeepScan.vscode-deepscan",
-		"streetsidesoftware.code-spell-checker"
-	],
-	"postCreateCommand": "yarn install"
+  "name": "HARZ",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash"
+  },
+  "extensions": [
+    "DeepScan.vscode-deepscan",
+    "streetsidesoftware.code-spell-checker"
+  ],
+  "postCreateCommand": "yarn install"
 }
