@@ -46,7 +46,7 @@ module.exports = async message => {
 
   if (mentionID !== message.client.user.id) return
 
-  const isForce = /-f|-F|--force/gu.test(message.content)
+  const isForce = /-f|--force/ui.test(message.content)
   /** @type {import('discord.js').Message} */
   const targetMessage = channelID && messageID
     ? await message.client.channels.fetch(channelID)
