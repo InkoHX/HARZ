@@ -4,11 +4,12 @@
     "dockerfile": "Dockerfile"
   },
   "settings": {
-    "terminal.integrated.shell.linux": "/bin/bash"
+    "terminal.integrated.shell.linux": "/bin/ash"
   },
   "extensions": [
     "DeepScan.vscode-deepscan",
-    "streetsidesoftware.code-spell-checker"
+    "streetsidesoftware.code-spell-checker",
+    "ms-azuretools.vscode-docker"
   ],
   "postCreateCommand": "yarn install"
 }
