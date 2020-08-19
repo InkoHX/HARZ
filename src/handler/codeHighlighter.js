@@ -1,6 +1,58 @@
 'use strict'
 
 const { highlightAuto } = require('highlight.js')
+const { lintCode, minimumStyleRules } = require('../lib/linter')
+
+const lintAndFix = code => lintCode(code, {
+  overrideConfig: {
+    rules: minimumStyleRules
+  },
+  fix: true
+})
+
+const format = async code => {
+  const { language } = highlightAuto(code)
+
+  switch (language) {
+    case 'json':
+      try {
+        return [{
+          code: JSON.stringify(JSON.parse(code), null, 2),
+          extension: 'json',
+          messages: null
+        }]
+      } catch (error) {
+        return [{
+          code,
+          extension: 'json',
+          messages: error.message
+        }]
+      }
+    case 'javascript':
+    case 'typescript':
+      const lintResults = (await lintAndFix(code))
+        .map(({ output, messages }) => ({ output, messages }))
+        .map(({ output, messages }) => ({
+          code: output ?? code,
+          extension: language,
+          messages: messages.map(({
+            severity,
+            message,
+            ruleId,
+            line,
+            column
+          }) => `${severity === 1 ? 'WARNING' : 'ERROR'} ${message} (${ruleId}) [${line}, ${column}]`).join('\n') || null
+        }))
+
+      return lintResults
+    default:
+      return [{
+        code,
+        extension: language,
+        messages: null
+      }]
+  }
+}
 
 /**
  * @param {import('discord.js').Message} message
@@ -19,12 +71,15 @@ module.exports = async message => {
   /** @type {import('discord.js').Message} */
   const targetMessage = channelID && messageID
     ? await message.client.channels.fetch(channelID)
-        .then(channel => channel.messages.fetch(messageID))
+      .then(channel => channel.messages.fetch(messageID))
     : await message.channel.messages.fetch(targetMessageID ?? { before: message.id, limit: 1 })
-        .then(message => message instanceof Map ? message.first() : message)
-  const targetCodeLanguage = highlightAuto(targetMessage.content).language
+      .then(message => message instanceof Map ? message.first() : message)
 
-  message.reply(`このコードの言語は「**${targetCodeLanguage}**」と判断されました。`)
-    .then(() => message.channel.send(targetMessage.cleanContent, { code: targetCodeLanguage ?? true, split: true }))
-    .catch(error => message.reply(error, { code: 'ts' }))
+  const results = await format(targetMessage.content)
+
+  for (const result of results) {
+    if (result.messages) await message.reply(result.messages, { code: 'ts', split: true })
+    
+    await message.channel.send(result.code, { code: result.extension ?? true, split: true })
+  }
 }
