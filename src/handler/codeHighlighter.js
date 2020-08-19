@@ -82,7 +82,7 @@ module.exports = async message => {
 
   for (const result of results) {
     if (result.messages) await message.reply(result.messages, { code: 'ts', split: true })
-    
+
     await message.channel.send(result.code, { code: result.extension ?? true, split: true })
   }
 }
