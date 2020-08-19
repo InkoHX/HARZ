@@ -31,7 +31,6 @@ const format = async code => {
     case 'javascript':
     case 'typescript':
       const lintResults = (await lintAndFix(code))
-        .map(({ output, messages }) => ({ output, messages }))
         .map(({ output, messages }) => ({
           code: output ?? code,
           extension: language,
