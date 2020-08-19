@@ -10,6 +10,10 @@ const lintAndFix = code => lintCode(code, {
   fix: true
 })
 
+/**
+ * Format the code
+ * @param {string} code
+ */
 const format = async code => {
   const { language } = highlightAuto(code)
 
