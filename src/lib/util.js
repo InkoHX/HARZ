@@ -1,7 +1,7 @@
 'use strict'
 
 /**
- * Find code blocks in string.
+ * Find code blocks in the string.
  * @param {string} str
  * @returns {IterableIterator<RegExpMatchArray>}
  */
