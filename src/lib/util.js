@@ -5,7 +5,7 @@
  * @param {string} str
  * @returns {IterableIterator<RegExpMatchArray>}
  */
-module.exports.searchCodeBlocks = str => str.matchAll(/`{3}(?<extension>[\S]+)?\n(?<code>[\s\S]+?)\n`{3}/gu)
+module.exports.searchCodeBlocks = str => str.matchAll(/`{3}(?<extension>[\w]+)?\n(?<code>[\s\S]+?)\n`{3}/gu)
 
 /**
  * Find links to GitHub's highlighted code in the string.
