@@ -14,7 +14,7 @@
   },
   "devDependencies": {
     "@types/jest": "^26.0.10",
-    "jest": "^26.4.0"
+    "jest": "^26.4.1"
   },
   "scripts": {
     "start": "node ./src/index.js",
