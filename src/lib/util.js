@@ -12,4 +12,4 @@ module.exports.searchCodeBlocks = str => str.matchAll(/`{3}(?<extension>[\w]+)?\
  * @param {string} str
  * @returns {IterableIterator<RegExpMatchArray>}
  */
-module.exports.searchGitHubHighlightedLineLinks = str => str.matchAll(/https?:\/\/github\.com\/(?<owner>.*)\/(?<repo>.*)\/blob\/(?<branch>.*?)\/(?<path>.*)#L(?<firstLine>[0-9]+)-?L?(?<lastLine>[0-9]+)?/gu)
+module.exports.searchGitHubHighlightedLineLinks = str => str.matchAll(/https?:\/\/github\.com\/(?<owner>.+?)\/(?<repo>.+?)\/blob\/(?<branch>.+?)\/(?<path>.+?)#L(?<firstLine>\d+)-?L?(?<lastLine>\d+)?/gu)
