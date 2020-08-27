@@ -1,7 +1,9 @@
 'use strict'
 
+const { CommandBuilder } = require('hardcord.js')
 const { highlightAuto } = require('highlight.js')
 const { lintCode, minimumStyleRules } = require('../lib/linter')
+const { MESSAGE_LINK_PATTERN } = require('../lib/util')
 
 const lintAndFix = code => lintCode(code, {
   overrideConfig: {
@@ -57,32 +59,52 @@ const format = async code => {
   }
 }
 
-/**
- * @param {import('discord.js').Message} message
- * @returns {Promise<void>}
- */
-module.exports = async message => {
-  const {
-    mentionID,
-    targetMessageID,
-    channelID,
-    messageID
-  } = message.content.match(/<@!?(?<mentionID>\d{17,19})> ?hl ?(?:(?<targetMessageID>\d{17,19})|https?:\/\/.*?discord(?:app)?\.com\/channels\/\d{17,19}\/(?<channelID>\d{17,19})\/(?<messageID>\d{17,19}))?/u)?.groups ?? {}
+module.exports = new CommandBuilder()
+  .setCommandHandler(async ({
+    message,
+    args
+  }) => {
+    const target = args[0] ?? ''
 
-  if (mentionID !== message.client.user.id) return
+    if (/^\d{17,19}/.test(target)) {
+      const targetMessage = await message.channel.messages.fetch(target)
+      const results = await format(targetMessage.content)
 
-  /** @type {import('discord.js').Message} */
-  const targetMessage = channelID && messageID
-    ? await message.client.channels.fetch(channelID)
-      .then(channel => channel.messages.fetch(messageID))
-    : await message.channel.messages.fetch(targetMessageID ?? { before: message.id, limit: 1 })
-      .then(message => message instanceof Map ? message.first() : message)
+      for (const result of results) {
+        if (result.messages) await message.reply(result.messages, { code: 'ts', split: true })
 
-  const results = await format(targetMessage.content)
+        await message.channel.send(result.code, { code: result.extension ?? true, split: true })
+      }
 
-  for (const result of results) {
-    if (result.messages) await message.reply(result.messages, { code: 'ts', split: true })
+      return
+    }
 
-    await message.channel.send(result.code, { code: result.extension ?? true, split: true })
-  }
-}
+    if (MESSAGE_LINK_PATTERN.test(target)) {
+      const {
+        channelID,
+        messageID
+      } = MESSAGE_LINK_PATTERN.exec(target).groups
+
+      const targetMessage = await message.client.channels.fetch(channelID)
+        .then(channel => channel.messages.fetch(messageID))
+      const results = await format(targetMessage.content)
+
+      for (const result of results) {
+        if (result.messages) await message.reply(result.messages, { code: 'ts', split: true })
+
+        await message.channel.send(result.code, { code: result.extension ?? true, split: true })
+      }
+
+      return
+    }
+
+    const targetMessage = await message.channel.messages.fetch({ before: message.id, limit: 1 })
+      .then(messages => messages.first())
+    const results = await format(targetMessage.content)
+
+    for (const result of results) {
+      if (result.messages) await message.reply(result.messages, { code: 'ts', split: true })
+
+      await message.channel.send(result.code, { code: result.extension ?? true, split: true })
+    }
+  })

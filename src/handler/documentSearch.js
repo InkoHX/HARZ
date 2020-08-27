@@ -1,33 +1,41 @@
 'use strict'
 
+const { CommandBuilder } = require('hardcord.js')
 const fetch = require('node-fetch').default
 const queryString = require('querystring').stringify
 
-/**
- * @param {import('discord.js').Message} message
- * @returns {Promise<void>}
- */
-module.exports = async message => {
-  const {
-    mentionID,
-    query
-  } = message.content.match(/<@!?(?<mentionID>\d{17,19})> ?docs ?(?<query>[\S]+)/u)?.groups ?? {}
+module.exports = new CommandBuilder()
+  .boolean('force')
+  .boolean('private')
+  .string('src')
+  .default('force', false)
+  .default('private', false)
+  .default('src', 'https://raw.githubusercontent.com/discordjs/discord.js/docs/stable.json')
+  .alias('force', 'f')
+  .alias('private', 'p')
+  .alias('src', 's')
+  .setCommandHandler(async ({
+    message,
+    flags: {
+      force,
+      private: includePrivate,
+      src
+    },
+    args
+  }) => {
+    const query = args[0]
 
-  if (mentionID !== message.client.user.id) return
+    if (!query) throw '第一引数に文字列を入力してください。'
 
-  const force = /-f|--force/ui.test(message.content)
-  const includePrivate = /-p|--private/ui.test(message.content)
-  const source = message.content.match(/(?:--src|-s)=(?<source>.*)?/ui)?.groups?.source ?? 'https://raw.githubusercontent.com/discordjs/discord.js/docs/stable.json'
+    const queries = queryString({ q: query, includePrivate, src, force })
+    const body = await fetch(`https://djsdocs.sorta.moe/v2/embed?${queries}`)
+      .then(response => response.json())
 
-  const queries = queryString({ q: query, src: source, force, includePrivate })
-  const body = await fetch(`https://djsdocs.sorta.moe/v2/embed?${queries}`)
-    .then(response => response.json())
-
-  if (body.error) {
-    message.reply(JSON.stringify(body, null, 2), { code: 'json' })
-      .catch(error => message.reply(error, { code: 'ts' }))
-  } else {
-    message.reply({ embed: body })
-      .catch(error => message.reply(error, { code: 'ts' }))
-  }
-}
+    if (body.error) {
+      message.reply(JSON.stringify(body, null, 2), { code: 'json' })
+        .catch(error => message.reply(error, { code: 'ts' }))
+    } else {
+      message.reply({ embed: body })
+        .catch(error => message.reply(error, { code: 'ts' }))
+    }
+  })
