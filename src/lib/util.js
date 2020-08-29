@@ -13,3 +13,8 @@ module.exports.searchCodeBlocks = str => str.matchAll(/`{3}(?<extension>[\w]+)?\
  * @returns {IterableIterator<RegExpMatchArray>}
  */
 module.exports.searchGitHubHighlightedLineLinks = str => str.matchAll(/https?:\/\/github\.com\/(?<owner>.+?)\/(?<repo>.+?)\/blob\/(?<branch>.+?)\/(?<path>.+?)#L(?<firstLine>\d+)-?L?(?<lastLine>\d+)?/gu)
+
+/**
+ * Discord Message Link Pattern
+ */
+module.exports.MESSAGE_LINK_PATTERN = /https?:\/\/.*?discord(?:app)?\.com\/channels\/\d{17,19}\/(?<channelID>\d{17,19})\/(?<messageID>\d{17,19})/u

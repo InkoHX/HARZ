@@ -1,7 +1,8 @@
 'use strict'
 
+const { CommandBuilder } = require('hardcord.js')
 const { lintCode, minimumStyleRules } = require('../lib/linter')
-const { searchCodeBlocks } = require('../lib/util')
+const { searchCodeBlocks, MESSAGE_LINK_PATTERN } = require('../lib/util')
 
 const supportLanguages = [
   'javascript',
@@ -20,45 +21,72 @@ const lintAndFix = code => lintCode(code, {
   fix: true
 })
 
-/**
- * @param {import('discord.js').Message} message
- * @param {import('eslint').ESLint.LintResult} result 
- */
-const makeResultMessage = (message, result) => message.channel.send(result.messages.map(({
-  severity,
-  message,
-  ruleId,
-  line,
-  column
-}) => `${severity === 1 ? 'WARNING' : 'ERROR'} ${message} (${ruleId}) [${line}, ${column}]`).join('\n') || '問題は見つかりませんでした。', { code: 'ts', split: true })
+module.exports = new CommandBuilder()
+  .boolean('force')
+  .alias('force', 'f')
+  .default('force', false)
+  .setCommandHandler(async ({
+    message,
+    flags: {
+      force
+    },
+    args
+  }) => {
+    /**
+     * @param {import('eslint').Linter.LintMessage[]} messages
+     */
+    const makeResultMessage = messages => messages.map(({
+      severity,
+      message,
+      ruleId,
+      line,
+      column
+    }) => `${severity === 1 ? 'WARNING' : 'ERROR'} ${message} (${ruleId}) [${line}, ${column}]`)
 
-/**
- * @param {import('discord.js').Message} message
- * @returns {Promise<void>}
- */
-module.exports = async message => {
-  const {
-    mentionID,
-    targetMessageID,
-    channelID,
-    messageID
-  } = message.content.match(/<@!?(?<mentionID>\d{17,19})> ?lint ?(?:(?<targetMessageID>\d{17,19})|https?:\/\/.*?discord(?:app)?\.com\/channels\/\d{17,19}\/(?<channelID>\d{17,19})\/(?<messageID>\d{17,19}))?/u)?.groups ?? {}
+    /**
+     * @param {import('discord.js').Message} targetMessage
+     */
+    const run = targetMessage => {
+      const codeBlocks = force
+        ? [...searchCodeBlocks(targetMessage.content)]
+          .map(result => result.groups)
+        : [...searchCodeBlocks(targetMessage.content)]
+          .map(result => result.groups)
+          .filter(({ extension }) => supportLanguages.includes(extension.toLowerCase()))
 
-  if (mentionID !== message.client.user.id) return
+      for (const { code } of codeBlocks) {
+        lintAndFix(code)
+          .then(results => results.map(result => makeResultMessage(result.messages).join('\n')))
+          .then(lintMessages => Promise.all(lintMessages.map(lintMessage => message.reply(lintMessage || '問題は見つかりませんでした。', { code: 'ts' }))))
+          .catch(error => message.reply(error, { code: 'ts' }))
+      }
+    }
 
-  const isForce = /-f|--force/ui.test(message.content)
-  /** @type {import('discord.js').Message} */
-  const targetMessage = channelID && messageID
-    ? await message.client.channels.fetch(channelID)
-      .then(channel => channel.messages.fetch(messageID))
-    : await message.channel.messages.fetch(targetMessageID ?? { before: message.id, limit: 1 })
-      .then(message => message instanceof Map ? message.first() : message)
-  const codeBlocks = [...searchCodeBlocks(targetMessage.content)]
-    .map(result => result.groups)
-    .filter(({ extension }) => isForce || supportLanguages.includes(extension))
+    const target = args[0] ?? ''
 
-  Promise.all(codeBlocks.map(({ code }) => lintAndFix(code)))
-    .then(results => results.flat())
-    .then(results => Promise.all(results.map(result => makeResultMessage(message, result))))
-    .catch(error => message.reply(error, { code: 'ts' }))
-}
+    if (/^\d{17,19}/.test(target)) {
+      run(await message.channel.messages.fetch(target))
+
+      return
+    }
+
+    if (MESSAGE_LINK_PATTERN.test(target)) {
+      const {
+        messageID,
+        channelID
+      } = MESSAGE_LINK_PATTERN.exec(target).groups
+
+      /** @type {import('discord.js').Message} */
+      const targetMessage = await message.client.channels.fetch(channelID)
+        .then(channel => channel.messages.fetch(messageID))
+
+      run(targetMessage)
+
+      return
+    }
+
+    const targetMessage = await message.channel.messages.fetch({ before: message.id, limit: 1 })
+      .then(messages => messages.first())
+
+    run(targetMessage)
+  })
