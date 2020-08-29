@@ -66,8 +66,10 @@ module.exports = new CommandBuilder()
   }) => {
     const target = args[0] ?? ''
 
-    if (/^\d{17,19}/.test(target)) {
-      const targetMessage = await message.channel.messages.fetch(target)
+    /**
+     * @param {import('discord.js').Message} targetMessage
+     */
+    const sendHighlightCode = async targetMessage => {
       const results = await format(targetMessage.content)
 
       for (const result of results) {
@@ -75,6 +77,12 @@ module.exports = new CommandBuilder()
 
         await message.channel.send(result.code, { code: result.extension ?? true, split: true })
       }
+    }
+
+    if (/^\d{17,19}/.test(target)) {
+      const targetMessage = await message.channel.messages.fetch(target)
+
+      await sendHighlightCode(targetMessage)
 
       return
     }
@@ -87,24 +95,14 @@ module.exports = new CommandBuilder()
 
       const targetMessage = await message.client.channels.fetch(channelID)
         .then(channel => channel.messages.fetch(messageID))
-      const results = await format(targetMessage.content)
 
-      for (const result of results) {
-        if (result.messages) await message.reply(result.messages, { code: 'ts', split: true })
-
-        await message.channel.send(result.code, { code: result.extension ?? true, split: true })
-      }
+      await sendHighlightCode(targetMessage)
 
       return
     }
 
     const targetMessage = await message.channel.messages.fetch({ before: message.id, limit: 1 })
       .then(messages => messages.first())
-    const results = await format(targetMessage.content)
 
-    for (const result of results) {
-      if (result.messages) await message.reply(result.messages, { code: 'ts', split: true })
-
-      await message.channel.send(result.code, { code: result.extension ?? true, split: true })
-    }
+    await sendHighlightCode(targetMessage)
   })
