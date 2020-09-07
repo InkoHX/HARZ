@@ -9,6 +9,7 @@ jest.config.js
 
 # Editor
 /.vscode
+/.devcontainer
 jsconfig.json
 
 # GitHub
