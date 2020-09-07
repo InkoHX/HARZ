@@ -1,12 +1,16 @@
 FROM node:14-alpine
 
-ENV WORKDIR_PATH "/inkohx/app/codeblock-linter-discordbot"
+WORKDIR /InkoHX/HARZ
 
-COPY . ${WORKDIR_PATH}
+# Add package.json and lockfile
+COPY package.json .
+COPY yarn.lock .
 
-WORKDIR ${WORKDIR_PATH}
-
-RUN yarn install --prod && \
+# Install dependencies
+RUN yarn install --prod --frozen-lockfile && \
   yarn cache clean
 
-ENTRYPOINT [ "yarn", "start" ]
+# Add source folder
+COPY src ./src
+
+ENTRYPOINT [ "node", "--unhandled-rejections=strict", "src/index.js" ]
