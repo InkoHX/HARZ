@@ -1,5 +1,6 @@
 'use strict'
 
+const { APIMessage } = require('discord.js')
 const { CommandBuilder } = require('hardcord.js')
 const fetch = require('node-fetch').default
 const queryString = require('querystring').stringify
@@ -30,12 +31,13 @@ module.exports = new CommandBuilder()
     const queries = queryString({ q: query, includePrivate, src, force })
     const body = await fetch(`https://djsdocs.sorta.moe/v2/embed?${queries}`)
       .then(response => response.json())
+      .then(body => body.error ? APIMessage.transformOptions(JSON.stringify(body, null, 2), { code: 'json' }) : { embed: body })
+    const documentMessage = await message.channel.send(body)
 
-    if (body.error) {
-      message.reply(JSON.stringify(body, null, 2), { code: 'json' })
-        .catch(error => message.reply(error, { code: 'ts' }))
-    } else {
-      message.reply({ embed: body })
-        .catch(error => message.reply(error, { code: 'ts' }))
-    }
+    const reactionFilter = (reaction, user) => reaction.emoji.name === '🗑️' && user.id === message.author.id
+
+    documentMessage.react('🗑️')
+      .then(reaction => reaction.message.awaitReactions(reactionFilter, { time: 60 * 1000, max: 1, errors: ['time'] }))
+      .then(() => Promise.all([documentMessage.delete(), message.delete()]))
+      .catch(error => error instanceof Map ? documentMessage.reactions.removeAll() : message.reply(error, { code: 'ts' }))
   })
