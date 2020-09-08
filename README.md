@@ -33,12 +33,12 @@ Click the "Deploy to Heroku" button below and you can get HARZ running now.
 An image published in the [Docker Hub](https://hub.docker.com/r/inkohx/harz) can also be used.
 
 ```bash
-# Create
+# Create a container
 docker create -e DISCORD_TOKEN="token here" --name harz-d1f inkohx/harz:latest
 
-# Start
+# Start container
 docker start harz-d1f
 
-# Stop
+# Stop container
 docker stop harz-d1f
 ```
