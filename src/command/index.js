@@ -4,5 +4,6 @@ module.exports = {
   lint: require('./lint'),
   hl: require('./highlight'),
   docs: require('./docs'),
-  help: require('./help')
+  help: require('./help'),
+  scrapbox: require('./scrapbox')
 }
