@@ -1,3 +1,5 @@
+'use strict'
+
 const { CommandBuilder } = require("hardcord.js")
 
 module.exports = new CommandBuilder()
