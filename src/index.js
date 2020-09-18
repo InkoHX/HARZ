@@ -22,7 +22,7 @@ const client = new Client({
 
 client.on('ready', () => console.log('READY!'))
 
-Object.entries(require('./handler'))
+Object.entries(require('./command'))
   .forEach(([commandName, builder]) => client.addCommand(commandName, builder))
 
 const formatDate = new Intl.DateTimeFormat('ja-JP-u-ca-japanese', {
