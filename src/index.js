@@ -13,10 +13,9 @@ const client = new Client({
     api: 'https://discord.com/api'
   },
   presence: {
-    status: 'idle',
     activity: {
-      type: 'STREAMING',
-      name: 'D1F-ALPHA'
+      type: 'COMPETING',
+      name: 'Discord API Library'
     }
   }
 })
