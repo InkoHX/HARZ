@@ -15,7 +15,8 @@ const client = new Client({
       type: 'COMPETING',
       name: 'Discord API Library'
     }
-  }
+  },
+  restTimeOffset: 0
 })
 
 Object.entries(require('./command'))
