@@ -35,7 +35,8 @@ module.exports = new CommandBuilder()
       sort
     }
   }) => {
-    if (!SCRAPBOX_SEARCH_ROST_TYPES.includes(sort)) throw `\`sort\`オプションで指定できるのは、${SCRAPBOX_SEARCH_ROST_TYPES.map(type => `\`${type}\``).join(', ')} のみです。`
+    if (!SCRAPBOX_SEARCH_ROST_TYPES.includes(sort))
+      return message.reply(`\`sort\`オプションで指定できるのは、${SCRAPBOX_SEARCH_ROST_TYPES.map(type => `\`${type}\``).join(', ')} のみです。`)
 
     const response = await fetch(`https://scrapbox.io/api/pages/${project}/search/query?skip=0&sort=${sort}&limit=30&q=${encodeURIComponent(args.join(' '))}`)
 
