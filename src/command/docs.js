@@ -26,7 +26,7 @@ module.exports = new CommandBuilder()
   }) => {
     const query = args[0]
 
-    if (!query) throw '第一引数に文字列を入力してください。'
+    if (!query) return message.reply('第一引数に文字列を入力してください。')
 
     const queries = queryString({ q: query, includePrivate, src, force })
     const body = await fetch(`https://djsdocs.sorta.moe/v2/embed?${queries}`)
