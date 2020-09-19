@@ -1,5 +1,6 @@
 'use strict'
 
 module.exports = [
-  require('./githubLinks')
+  require('./githubLinks'),
+  require('./scrapboxUpdates')
 ]
