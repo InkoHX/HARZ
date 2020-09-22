@@ -57,6 +57,10 @@ module.exports = new CommandBuilder()
         .setTitle(page.title)
         .setURL(`https://scrapbox.io/${project}/${encodeURIComponent(page.title)}`)
         .setThumbnail('https://i.gyazo.com/7057219f5b20ca8afd122945b72453d3.png')
+        .setDescription(page.snipet
+          .map(text => text.replace(/<b>|<\/b>/g, '**'))
+          .join('\n')
+        )
         .addField('閲覧数', page.views, true)
 
       if (typeof page.image === 'string') embed.setImage(page.image)
