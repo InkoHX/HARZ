@@ -1388,7 +1388,8 @@ discord.js-reaction-controller@^1.1.1:
 
 discord.js@discordjs/discord.js#master:
   version "12.3.1"
-  resolved "https://codeload.github.com/discordjs/discord.js/tar.gz/1e63f3756e814d6b1a2a9c17af9c2b28ce37e472"
+  uid "169d4c3bff75858d84ed91d1a92b0c1f3bedbc02"
+  resolved "https://codeload.github.com/discordjs/discord.js/tar.gz/169d4c3bff75858d84ed91d1a92b0c1f3bedbc02"
   dependencies:
     "@discordjs/collection" "^0.1.6"
     "@discordjs/form-data" "^3.0.1"
