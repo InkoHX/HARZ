@@ -13,7 +13,7 @@ const client = new Client({
   presence: {
     activity: {
       type: 'COMPETING',
-      name: 'Discord API Library'
+      name: '大乱闘スマッシュブラザーズ'
     }
   },
   restTimeOffset: 0
