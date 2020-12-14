@@ -1,4 +1,4 @@
-FROM node:14-alpine
+FROM node:15-alpine
 
 # Required to download yuta0801/discord.js-repl from GitHub
 RUN apk update && \
