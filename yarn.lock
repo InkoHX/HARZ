@@ -1372,15 +1372,14 @@ discord.js-reaction-controller@^1.1.1:
 
 discord.js@discordjs/discord.js#master:
   version "12.5.0"
-  uid b8be7237b843285f2e9ecb12fdea45c38ad993a8
-  resolved "https://codeload.github.com/discordjs/discord.js/tar.gz/b8be7237b843285f2e9ecb12fdea45c38ad993a8"
+  uid c4c817116f868cedb4ec20bcbf90b9b3d382621e
+  resolved "https://codeload.github.com/discordjs/discord.js/tar.gz/c4c817116f868cedb4ec20bcbf90b9b3d382621e"
   dependencies:
     "@discordjs/collection" "^0.1.6"
     "@discordjs/form-data" "^3.0.1"
     abort-controller "^3.0.0"
     node-fetch "^2.6.1"
     prism-media "^1.2.2"
-    setimmediate "^1.0.5"
     tweetnacl "^1.0.3"
     ws "^7.3.1"
 
@@ -3535,11 +3534,6 @@ set-value@^2.0.0, set-value@^2.0.1:
     is-extendable "^0.1.1"
     is-plain-object "^2.0.3"
     split-string "^3.0.1"
-
-setimmediate@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/setimmediate/-/setimmediate-1.0.5.tgz#290cbb232e306942d7d7ea9b83732ab7856f8285"
-  integrity sha1-KQy7Iy4waULX1+qbg3Mqt4VvgoU=
 
 shebang-command@^1.2.0:
   version "1.2.0"
