@@ -12,7 +12,7 @@
     "hardcord.js": "^1.0.1-alpha.1",
     "highlight.js": "^10.5.0",
     "node-fetch": "^2.6.1",
-    "typescript": "^4.1.3"
+    "typescript": "^4.1.5"
   },
   "devDependencies": {
     "@types/jest": "^26.0.20",
