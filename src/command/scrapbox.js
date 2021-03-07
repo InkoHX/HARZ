@@ -7,18 +7,8 @@ const { MessageEmbed } = require("discord.js")
 
 const SCRAPBOX_SEARCH_ROST_TYPES = [
   'updated',
-  'created',
-  'accessed',
-  'linked',
-  'views',
-  'title'
+  'pageRank'
 ]
-
-const dateTimeFormat = Intl.DateTimeFormat('ja-JP-u-ca-japanese', {
-  timeZone: 'Asia/Tokyo',
-  timeStyle: 'medium',
-  dateStyle: 'short'
-}).format
 
 module.exports = new CommandBuilder()
   .string('sort')
@@ -55,19 +45,14 @@ module.exports = new CommandBuilder()
       const embed = new MessageEmbed()
         .setColor('GREEN')
         .setTitle(page.title)
-        .setURL(`https://scrapbox.io/${project}/${encodeURIComponent(page.title)}`)
+        .setURL(`https://scrapbox.io/${project}/${page.title}`)
         .setThumbnail('https://i.gyazo.com/7057219f5b20ca8afd122945b72453d3.png')
         .setDescription(page.lines
           .map(text => text.trim())
           .join('\n')
         )
-        .addField('閲覧数', page.views, true)
 
-      if (typeof page.image === 'string') embed.setImage(page.image)
-      if (typeof page.created === 'number') embed.addField('作成日', dateTimeFormat(page.created * 1000), true)
-      if (typeof page.updated === 'number') embed.addField('更新日', dateTimeFormat(page.updated * 1000), true)
-      if (typeof page.accessed === 'number') embed.addField('最終アクセス日', dateTimeFormat(page.accessed * 1000), true)
-      if (typeof page.snapshotCreated === 'number') embed.addField('スナップショット作成日', dateTimeFormat(page.snapshotCreated * 1000), true)
+      if (page.image) embed.setImage(page.image)
 
       controller.addPage(embed)
     }
