@@ -13,7 +13,7 @@ const SCRAPBOX_SEARCH_ROST_TYPES = [
 module.exports = new CommandBuilder()
   .string('sort')
   .string('project')
-  .default('sort', 'title')
+  .default('sort', 'pageRank')
   .default('project', 'discordjs-japan')
   .alias('sort', 's')
   .alias('project', 'p')
