@@ -10,7 +10,7 @@
     "discord.js-reaction-controller": "^1.1.1",
     "eslint": "^7.22.0",
     "hardcord.js": "^1.0.1-alpha.1",
-    "highlight.js": "^10.6.0",
+    "highlight.js": "^10.7.1",
     "node-fetch": "^2.6.1",
     "typescript": "^4.2.3"
   },
