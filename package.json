@@ -8,7 +8,7 @@
     "@typescript-eslint/parser": "^3.10.1",
     "discord.js": "discordjs/discord.js#master",
     "discord.js-reaction-controller": "^1.1.1",
-    "eslint": "^7.22.0",
+    "eslint": "^7.24.0",
     "hardcord.js": "^1.0.1-alpha.1",
     "highlight.js": "^10.6.0",
     "node-fetch": "^2.6.1",
