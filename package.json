@@ -11,7 +11,7 @@
     "eslint": "^7.22.0",
     "hardcord.js": "^1.0.1-alpha.1",
     "highlight.js": "^10.6.0",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^3.3.0",
     "typescript": "^4.2.3"
   },
   "devDependencies": {
